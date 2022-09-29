@@ -74,9 +74,8 @@ namespace Crm.DataAccessLayer.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<string>("EmployeeBirth")
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                    b.Property<DateTime>("EmployeeBirth")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("EmployeeGender")
                         .HasMaxLength(5)
