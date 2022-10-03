@@ -4,6 +4,25 @@
     ViewData["Title"] = "Index";
     Layout = "~/Views/Shared/_CrmLayout.cshtml";
 }
+@*@{ 
+    int s1 = 10;
+    int s2 = 20;
+    int sonuc = s1 + s2;
+    string mesaj;
+    if (sonuc<=40)
+    {
+        mesaj = "başarılı";
+    }
+    else
+    {
+        mesaj = "Başarısız";
+    }
+}*@
+
+@{ 
+    string cinsiyet;
+    int sayac = 0;
+}
 
 <h1>Çalışan Listesi</h1>
 <table class="table table-bordered">
@@ -19,12 +38,22 @@
     </tr>
     @foreach (var item in Model)
     {
+        if (item.EmployeeGender=="erkek")
+        {
+            cinsiyet = "color: blue; font-weight:bold";
+        }
+        else
+        {
+            cinsiyet = "color: red; font-weight:bold";
+
+        }
+        sayac++;
         <tr>
-            <td>@item.EmployeeID</td>
+            <td>@sayac</td>
             <td>@item.EmployeeName</td>
             <td>@item.EmployeeSurname</td>
             <td>@item.EmployeeMail</td>
-            <td>@item.EmployeeGender</td>
+            <td><span style="@cinsiyet">@item.EmployeeGender</span></td>
             <td>@item.EmployeeBirth</td>
             <td><a href="#" class="btn btn-outline-danger">Sil</a></td>
             <td><a href="#" class="btn btn-outline-success">Güncelle</a></td>
@@ -33,6 +62,8 @@
     
 </table>
 <a href="/Employee/AddEmployee/" class="btn btn-outline-primary">Yeni Çalışan Girişi</a>
+<br />
+@*<h2>sonuç: @sonuc - @mesaj</h2>*@
       
 
 
