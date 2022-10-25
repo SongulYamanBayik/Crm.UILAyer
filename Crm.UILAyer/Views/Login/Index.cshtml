@@ -1,15 +1,17 @@
-﻿
+﻿@model Crm.UILAyer.Models.UserSignInModel
 @{
     Layout = null;
 }
-
-<!DOCTYPE html>
-
-<html>
-<head>
-    <meta name="viewport" content="width=device-width" />
-    <title>Index</title>
-</head>
-<body>
-</body>
-</html>
+<link href="~/lib/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" />
+<h3>Login Sayfası</h3>
+<div class="container">
+    <form method="post">
+        <label>Kullanıcı Adı</label>
+        <input type="text" asp-for="UserName" class="form-control" />
+        <br />
+        <label>Şifre</label>
+        <input type="text" asp-for="Password" class="form-control" />
+        <br />
+        <button class="btn btn-primary">Giriş Yap</button>
+    </form>
+</div>

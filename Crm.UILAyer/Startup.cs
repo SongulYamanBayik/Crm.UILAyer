@@ -4,6 +4,7 @@ using Crm.DataAccessLayer.Abstract;
 using Crm.DataAccessLayer.Concrete;
 using Crm.DataAccessLayer.EntityFramework;
 using Crm.EntityLayer.Concrete;
+using Crm.UILAyer.Models;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -32,13 +33,11 @@ namespace Crm.UILAyer
             services.AddScoped<IEmployeeService, EmployeeManager>();
             services.AddScoped<IEmployeeDal, EFEmployeeDal>();
 
+            services.AddScoped<IMessageService, MessageManager>();
+            services.AddScoped<IMessageDal, EFMessageDal>();
+
             services.AddDbContext<Context>();
-            services.AddIdentity<AppUser, AppRole>(x =>
-            {
-                x.Password.RequireUppercase = false;
-                x.Password.RequireNonAlphanumeric = false;
-                x.Password.RequiredLength = 3;
-            }).AddEntityFrameworkStores<Context>();
+            services.AddIdentity<AppUser, AppRole>().AddErrorDescriber<CustomIdentityValidator>().AddEntityFrameworkStores<Context>();
 
 
             services.AddControllersWithViews();
@@ -59,6 +58,7 @@ namespace Crm.UILAyer
             }
             app.UseStatusCodePagesWithReExecute("/ErrorPage/Error404", "?code={0}");
 
+            app.UseAuthentication();
             app.UseHttpsRedirection();
             app.UseStaticFiles();
 
