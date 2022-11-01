@@ -1,0 +1,22 @@
+﻿@model Crm.UILAyer.Models.MailRequest
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_MemberLayout.cshtml";
+}
+<link href="~/lib/bootstrap/dist/css/bootstrap.css" rel="stylesheet" />
+<div class="container">
+    <form method="post">
+        <label>Alıcı Mail</label>
+        <input type="text" asp-for="ReceiverMail" class="form-control" />
+        <br />
+        <label>Konu</label>
+        <input type="text" asp-for="Subject" class="form-control" />
+        <br />
+        <label>Mesaj</label>
+        <br />
+        <textarea rows="3" cols="125" asp-for="Body"></textarea>
+        <br />
+        <br />
+        <button class="btn btn-info">Gönder</button>
+    </form>
+</div>

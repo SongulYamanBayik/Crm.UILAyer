@@ -37,7 +37,9 @@ namespace Crm.UILAyer
             services.AddScoped<IMessageDal, EFMessageDal>();
 
             services.AddDbContext<Context>();
-            services.AddIdentity<AppUser, AppRole>().AddErrorDescriber<CustomIdentityValidator>().AddEntityFrameworkStores<Context>();
+            services.AddIdentity<AppUser, AppRole>(opts=> {
+                opts.User.RequireUniqueEmail = true;
+            }).AddErrorDescriber<CustomIdentityValidator>().AddEntityFrameworkStores<Context>();
 
 
             services.AddControllersWithViews();

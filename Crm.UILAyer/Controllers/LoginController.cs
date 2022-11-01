@@ -14,12 +14,13 @@ namespace Crm.UILAyer.Controllers
     {
 
         private readonly SignInManager<AppUser> _signInManager;
+        private readonly UserManager<AppUser> _userManager;
 
-        public LoginController(SignInManager<AppUser> signInManager)
+        public LoginController(SignInManager<AppUser> signInManager, UserManager<AppUser> userManager)
         {
             _signInManager = signInManager;
+            _userManager = userManager;
         }
-
 
         [HttpGet]
         public IActionResult Index()
@@ -32,14 +33,28 @@ namespace Crm.UILAyer.Controllers
         {
             if (ModelState.IsValid)
             {
+                AppUser appUser = await _userManager.FindByNameAsync(p.UserName);
+                if (await _userManager.IsLockedOutAsync(appUser))
+                {
+                    ModelState.AddModelError("", "Hesabınız geçiçi olarak erişime kapatılmıştır.");
+                    return View();
+                }
                 var result = await _signInManager.PasswordSignInAsync(p.UserName, p.Password, false, true);
                 if (result.Succeeded)
                 {
+                    await _userManager.ResetAccessFailedCountAsync(appUser);
                     return RedirectToAction("Index", "Dashboard");
                 }
                 else
                 {
-                    return RedirectToAction("Index");
+                    await _userManager.AccessFailedAsync(appUser);
+                    int failedCounter = await _userManager.GetAccessFailedCountAsync(appUser);
+                    ModelState.AddModelError("", $"Başarısız Giriş Sayısı: {failedCounter}");
+                    if (failedCounter==3)
+                    {
+                        await _userManager.SetLockoutEndDateAsync(appUser, new DateTimeOffset(DateTime.Now.AddHours(5)));
+                    }
+                    //return RedirectToAction("Index");
                 }
             }
             return View();
