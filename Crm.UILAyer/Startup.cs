@@ -36,6 +36,9 @@ namespace Crm.UILAyer
             services.AddScoped<IMessageService, MessageManager>();
             services.AddScoped<IMessageDal, EFMessageDal>();
 
+            services.AddScoped<ICategoryService, CategoryManager>();
+            services.AddScoped<ICategoryDal, EFCategoryDal>();
+
             services.AddDbContext<Context>();
             services.AddIdentity<AppUser, AppRole>(opts=> {
                 opts.User.RequireUniqueEmail = true;

@@ -1,0 +1,25 @@
+﻿@model List<Crm.EntityLayer.Concrete.AppUser>
+@{
+    ViewData["Title"] = "UserList";
+    Layout = "~/Views/Shared/_MemberLayout.cshtml";
+    int sayac = 0;
+}
+
+<h1>Kullanıcı Listesi</h1>
+<table class="table table-bordered">
+    <tr>
+        <th>#</th>
+        <th>Adı</th>
+        <th>Rol ata</th>
+    </tr>
+    @foreach (var item in Model)
+    {
+        sayac++;
+        <tr>
+            <td>@sayac</td>
+            <td>@item.Name @item.Surname</td>
+            <td><a href="/Role/AssignRole2/@item.Id" class="btn btn-dark">Rolü Ata</a></td>
+        </tr>
+    }
+</table>
+
