@@ -1,0 +1,258 @@
+﻿
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_MemberLayout.cshtml";
+}
+
+<script src="~/lib/jquery/dist/jquery.js"></script>
+<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+<script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<table class="table "  id="CategoryList">
+    <thead>
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">Kategori Adı</th>
+            <th scope="col"></th>
+            <th scope="col"></th>
+        </tr>
+    </thead>
+    <tbody>
+    </tbody>
+</table>
+<button type="button" class="btn btn-success " id="btnAdd" hidden> Kategori Ekle</button>
+<script>
+    $(document).ready(function () {
+        getCategoryList();
+        $('#btnAdd').removeAttr('hidden');
+
+    });
+
+
+    function getCategoryList() {
+        $('#CategoryList').hide();
+
+        $('#CategoryList tbody tr').remove();
+
+        $.ajax({
+            contentType: "application/json",
+            dataType: "json",
+            type: "Get",
+            url: "/Category2/getCategoryList/",
+
+            success: function (func) {
+                let data = jQuery.parseJSON(func);
+                let tableBody = $("table tbody");
+
+                $.each(data, (Index, value) => {
+                    let tr = `<tr>
+                                     <td> ${value.CategoryID}</td>
+                                     <td> <input type="text" class="form-control input_${value.CategoryID}" id="${value.CategoryID}" value="${value.CategoryName}" onchange="inputChangeEvent(this.id)" > </td>
+                                     <td> <button type="button" class="btn btn-warning btnUpdate_${value.CategoryID}" id="${value.CategoryID}" onclick="btnUpdateClick(this.id)" disabled>Düzenle</button></td>
+                                     <td> <button type="button" class="btn btn-danger btnDelete" id="${value.CategoryID}" onclick="btnDeleteClick(this.id)" >Sil</button></td>
+
+                                 </tr>`;
+
+                    tableBody.append(tr);
+                });
+
+                $('#CategoryList').show();
+
+
+            }
+        });
+
+    }
+
+    function inputChangeEvent(id) {
+        $(".btnUpdate_" + id).prop('disabled', false);
+    }
+
+    function btnUpdateClick(id) {
+        let categoryName = $(".input_" + id).val();
+
+        Swal.fire({
+            title: 'Emin Misiniz?',
+            text: 'Kategori İsmi ' + categoryName + ' olarak Güncellemek istediğinizden Emin Misiniz',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Evet, Güncelle!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+
+                updateCategoryName(id, categoryName);
+            }
+        })
+
+    }
+
+    function updateCategoryName(id, categoryName) {
+
+
+        $.ajax({
+            contentType: "application/json",
+            dataType: "json",
+            type: "Get",
+            url: "/Category2/updateCategory/",
+            data: {
+                categoryid: id,
+                categoryName: categoryName,
+            },
+            success: function (data) {
+                console.log(data);
+                if (data) {
+                    Swal.fire(
+                        'Güncelleme!',
+                        'Güncelleme işlemi başarılı.',
+                        'success'
+                    )
+
+                    getCategoryList();
+
+                } else {
+                    Swal.fire(
+                        'Güncelleme!',
+                        'Güncelleme işlemi Hatalı.',
+                        'warning'
+                    )
+                }
+            }
+        });
+    }
+
+    function btnDeleteClick(id) {
+        let categoryName = $(".input_" + id).val();
+
+        Swal.fire({
+            title: 'Emin Misiniz?',
+            text: 'Kategori İsmi ' + categoryName + ' Silinecek Emin Misiniz',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Evet, Sil!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+
+                deleteCategory(id);
+            }
+        })
+
+    }
+
+    function deleteCategory(id) {
+        $.ajax({
+            contentType: "application/json",
+            dataType: "json",
+            type: "Get",
+            url: "/Category2/deleteCategory/",
+            data: {
+                categoryid: id,
+            },
+            success: function (data) {
+                console.log(data);
+                if (data) {
+                    Swal.fire(
+                        'Silme!',
+                        'Silme işlemi başarılı.',
+                        'success'
+                    )
+
+                    getCategoryList();
+
+                } else {
+                    Swal.fire(
+                        'Silme!',
+                        'Silme işlemi Hatalı.',
+                        'warning'
+                    )
+                }
+            }
+        });
+    }
+
+    $('#btnAdd').click(function () {
+        Swal.fire({
+            title: 'Submit your Github username',
+            input: 'text',
+            inputAttributes: {
+                autocapitalize: 'off'
+            },
+            showCancelButton: true,
+            confirmButtonText: 'Look up',
+            showLoaderOnConfirm: true,
+            preConfirm: (login) => {
+                return fetch(`//api.github.com/users/${login}`)
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error(response.statusText)
+                        }
+                        return response.json()
+                    })
+                    .catch(error => {
+                        Swal.showValidationMessage(
+                            `Request failed: ${error}`
+                        )
+                    })
+            },
+            allowOutsideClick: () => !Swal.isLoading()
+        }).then((result) => {
+            if (result.isConfirmed) {
+                Swal.fire({
+                    title: `${result.value.login}'s avatar`,
+                    imageUrl: result.value.avatar_url
+                })
+            }
+        })
+        Swal.fire({
+            title: 'Yeni Kategori Adı: ',
+            input: 'text',
+            inputAttributes: {
+                autocapitalize: 'off'
+            },
+            showCancelButton: true,
+            cancelButtonText:'İptal',
+            confirmButtonText: 'Kaydet',
+            showLoaderOnConfirm: true,
+            preConfirm: (login) => {
+                let value = login;
+                const data = { categoryName: value };
+                console.log(value);
+                return addCategory(value);               
+            },
+            allowOutsideClick: () => !Swal.isLoading()
+        }).then((result) => {
+            if (result.isConfirmed) {
+
+                Swal.fire(
+                    'Kategori Ekleme!',
+                    'Kategori Ekleme işlemi başarılı.',
+                    'success'
+                )
+                setTimeout(() => { getCategoryList() }, 1000);
+            }
+        })
+
+    });
+
+    function addCategory(categoryName) {
+
+        $.ajax({
+            contentType: "application/json",
+            dataType: "json",
+            type: "Get",
+            url: "/Category2/addCategory/",
+            data: {
+                categoryName: categoryName,
+            },
+            success: function (data) {
+                
+                return data;
+            }
+        });
+
+    }
+</script>
+

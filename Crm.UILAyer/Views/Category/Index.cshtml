@@ -8,6 +8,9 @@
 <button type="button" id="btnsweetmessage" class="btn btn-outline-info">sweet message</button>
 <button type="button" id="btnsweetmessage2" class="btn btn-outline-info">sweet message2</button>
 <button type="button" id="btngetlist" class="btn btn-outline-info">Listele</button>
+<button type="button" id="btncategoriadd" class="btn btn-outline-warning">Kategori Ekle</button>
+<button type="button" id="btncategoryGet" class="btn btn-outline-dark">Kategori Getir</button>
+<button type="button" id="btncategorydelete" class="btn btn-outline-dark">Kategori Sil</button>
 
 
 <script src="~/lib/jquery/dist/jquery.js"></script>
@@ -16,12 +19,33 @@
 <div id="categorylist">
 
 </div>
+<br />
+<br />
+<div>
+    <h5>Yeni Kategori Ekleme Paneli</h5>
+    <input type="text" class="form-control" id="txtcategoryname" placeholder="Kategori Adını Giriniz." />
+</div>
+<br />
+<br />
+
+<div>
+    <h5>ID'ye Göre Kategori Getirme</h5>
+    <input type="text" class="form-control" id="txtcategoryid" placeholder="Kategori ID Giriniz." />
+
+</div>
+<br />
+<br />
+
+<div id="categorylistbyid">
+
+</div>
+
 <script>
-    
-        $("#btngetlist1").click(function () {
-            alert("Hellooo");
-        });
-    
+
+    $("#btngetlist1").click(function () {
+        alert("Hellooo");
+    });
+
 </script>
 
 <script>
@@ -53,11 +77,52 @@
                 let htmls = "<table class=table table-bordered><tr><th>Kategori ID </th> <th> Kategori Adı </th></tr>";
 
                 $.each(values, (Index, value) => {
-                    htmls += `<tr> <td> ${value.CategoryID}</td> <td> ${value.CategoryName}</td></tr>`
+                    htmls += `<tr>
+                                <td> ${value.CategoryID}</td> 
+                                <td> ${value.CategoryName}</td>
+s
+                              </tr>`
                 });
                 htmls += "</table>";
                 $("#categorylist").html(htmls);
             }
         });
     });
+
+    $("#btncategoriadd").click(function () {
+        let values = {
+            CategoryName: $("#txtcategoryname").val()
+        };
+        $.ajax({
+            type: "post",
+            url: "/Category/AddCategory/",
+            data: values,
+            success: function (funk2) {
+                let result = jQuery.parseJSON(funk2);
+                sweetAlert("Kategori Ekleme İşlemi Başarılı");
+            }
+        });
+    });
+
+    $("#btncategoryGet").click(x => {
+        let id = $("#txtcategoryid").val();
+
+        $.ajax({
+            contentType: "application/json",
+            dataType: "json",
+            type: "get",
+            url: "/Category/GetByID/",
+            data: { categoryid: id },
+            success: function (funk3) {
+                let result = jQuery.parseJSON(funk3);
+                console.log(result);
+
+
+                let htmls1 = `<table class=table table-bordered><tr><th>Kategori ID</th><th>Kategori Adı</th></tr><tr><td>${result.CategoryID}</td><td>${result.CategoryName}</td></tr></table>`;
+                $("#categorylistbyid").html(htmls1);
+            }
+        });
+    });
 </script>
+
+
