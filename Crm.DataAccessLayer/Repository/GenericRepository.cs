@@ -22,7 +22,7 @@ namespace Crm.DataAccessLayer.Repository
         public void Delete(T t)
         {
             _object.Remove(t);
-            var a = context.SaveChanges();
+            context.SaveChanges();
         }
 
         public T GetByID(int id)
